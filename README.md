@@ -4,6 +4,10 @@ A comprehensive demo showcasing **LazorKit SDK** integration for passkey-based S
 
 ![LazorKit Demo](https://img.shields.io/badge/Solana-Devnet-green) ![Framework](https://img.shields.io/badge/Framework-Vite%20%2B%20React-blue) ![License](https://img.shields.io/badge/License-MIT-yellow)
 
+## 🌐 Live Demo
+
+**[https://lazorkit-demo-two.vercel.app](https://lazorkit-demo-two.vercel.app)**
+
 ## ✨ Features
 
 - **🔐 Passkey Authentication**: Use fingerprint, Face ID, or Windows Hello instead of seed phrases
@@ -24,7 +28,7 @@ A comprehensive demo showcasing **LazorKit SDK** integration for passkey-based S
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/lazorkit-demo.git
+git clone https://github.com/mattcrypto12/lazorkit-demo.git
 cd lazorkit-demo
 
 # Install dependencies
