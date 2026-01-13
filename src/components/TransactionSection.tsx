@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useWallet } from '@lazorkit/wallet';
 import { SystemProgram, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { NETWORK_CONFIG, DEMO_CONFIG } from '../config';
+import { addPendingTransaction } from '../utils/pendingTx';
 
 /* SOL transfer form */
 export function TransactionSection() {
@@ -48,6 +49,7 @@ export function TransactionSection() {
         instructions: [instruction],
       });
 
+      addPendingTransaction(signature);
       setTxSignature(signature);
     } catch (err) {
       console.error('Transfer failed:', err);

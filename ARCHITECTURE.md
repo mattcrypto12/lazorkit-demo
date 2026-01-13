@@ -2,9 +2,7 @@
 
 ## Flow
 
-```
 User → React App → LazorkitProvider → WebAuthn → LazorKit Portal → Solana
-```
 
 ### Connect
 1. User clicks connect
@@ -20,35 +18,14 @@ User → React App → LazorkitProvider → WebAuthn → LazorKit Portal → Sol
 4. Paymaster sponsors fee and submits
 5. App gets signature back
 
-## Files
-
-```
-src/
-├── components/
-│   ├── ConnectButton.tsx    # Passkey auth
-│   ├── WalletInfo.tsx       # Address, balance display
-│   ├── TokenBalances.tsx    # USDC, USDT, BONK
-│   ├── QuickActions.tsx     # One-click sends
-│   ├── TransactionSection.tsx
-│   ├── MessageSection.tsx
-│   └── RecentActivity.tsx
-├── hooks/
-│   ├── useBalance.ts        # SOL balance with polling
-│   └── useGaslessTransaction.ts
-├── config/
-│   └── lazorkit.ts          # RPC, portal, paymaster URLs
-└── styles/
-    └── index.css
-```
-
 ## Config
 
 All in `src/config/lazorkit.ts`:
 
-| Key | What it does |
-|-----|--------------|
-| RPC_URL | Solana endpoint |
-| PORTAL_URL | LazorKit auth UI |
+| Key                    |   What it does      |
+------------------------------------------------
+| RPC_URL                | Solana endpoint     |
+| PORTAL_URL             | LazorKit auth UI    |
 | PAYMASTER.paymasterUrl | Gas sponsor service |
 
 ## Smart Wallet

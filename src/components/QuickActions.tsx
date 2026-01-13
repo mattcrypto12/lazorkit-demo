@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useWallet } from '@lazorkit/wallet';
 import { SystemProgram, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { NETWORK_CONFIG } from '../config';
+import { addPendingTransaction } from '../utils/pendingTx';
 
 /* One-click gasless sends */
 export function QuickActions() {
@@ -35,6 +36,7 @@ export function QuickActions() {
         instructions: [instruction],
       });
 
+      addPendingTransaction(signature);
       setResult({
         type: 'success',
         message: `Sent ${amount} SOL`,

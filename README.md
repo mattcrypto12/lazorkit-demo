@@ -24,16 +24,6 @@ npm run dev
 
 Opens at http://localhost:3000
 
-## Project Structure
-
-```
-src/
-├── components/     # UI components
-├── hooks/          # useBalance, useGaslessTransaction
-├── config/         # SDK configuration
-└── styles/         # CSS
-```
-
 ## Configuration
 
 Edit `src/config/lazorkit.ts`:

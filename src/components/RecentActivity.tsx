@@ -1,19 +1,38 @@
 import { useState, useEffect } from 'react';
 import { useWallet } from '@lazorkit/wallet';
 import { LAZORKIT_CONFIG, NETWORK_CONFIG } from '../config';
+import { subscribeToPending, PendingTransaction } from '../utils/pendingTx';
 
 interface Transaction {
   signature: string;
   type: string;
   timestamp: number;
-  status: 'success' | 'failed';
+  status: 'pending' | 'success' | 'failed';
 }
 
 /* Recent transactions list */
 export function RecentActivity() {
   const { isConnected, smartWalletPubkey } = useWallet();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [pendingTxs, setPendingTxs] = useState<Map<string, Transaction>>(new Map());
   const [isLoading, setIsLoading] = useState(false);
+
+  // Subscribe to pending transactions
+  useEffect(() => {
+    const unsubscribe = subscribeToPending((tx: PendingTransaction) => {
+      setPendingTxs(prev => {
+        const next = new Map(prev);
+        next.set(tx.signature, {
+          signature: tx.signature,
+          type: 'Transfer',
+          timestamp: tx.timestamp,
+          status: 'pending',
+        });
+        return next;
+      });
+    });
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     async function fetchTransactions() {
@@ -46,7 +65,6 @@ export function RecentActivity() {
           }));
           
           // Group transactions within 3 seconds of each other (smart wallet creates multiple)
-          // Only show the first one from each group
           const grouped: Transaction[] = [];
           let lastTimestamp = 0;
           
@@ -56,6 +74,21 @@ export function RecentActivity() {
               lastTimestamp = tx.timestamp;
             }
           }
+          
+          // Remove confirmed transactions from pending
+          setPendingTxs(prev => {
+            const next = new Map(prev);
+            for (const tx of grouped) {
+              next.delete(tx.signature);
+            }
+            // Also remove any pending tx older than 60 seconds
+            for (const [sig, ptx] of next) {
+              if (Date.now() - ptx.timestamp > 60000) {
+                next.delete(sig);
+              }
+            }
+            return next;
+          });
           
           setTransactions(grouped.slice(0, 5));
         }
@@ -67,9 +100,16 @@ export function RecentActivity() {
     }
 
     fetchTransactions();
-    const interval = setInterval(fetchTransactions, 30000);
+    // Poll more frequently when there are pending txs
+    const interval = setInterval(fetchTransactions, pendingTxs.size > 0 ? 3000 : 30000);
     return () => clearInterval(interval);
-  }, [smartWalletPubkey?.toBase58()]);
+  }, [smartWalletPubkey?.toBase58(), pendingTxs.size]);
+
+  // Combine pending and confirmed transactions
+  const allTransactions = [
+    ...Array.from(pendingTxs.values()),
+    ...transactions.filter(tx => !pendingTxs.has(tx.signature)),
+  ].slice(0, 5);
 
   const formatTime = (timestamp: number) => {
     const date = new Date(timestamp);
@@ -93,27 +133,33 @@ export function RecentActivity() {
           <span className="spinner-small"></span>
           <span>Loading...</span>
         </div>
-      ) : transactions.length === 0 ? (
+      ) : allTransactions.length === 0 ? (
         <div className="activity-empty">
           <p>No transactions yet</p>
           <span>Your transaction history will appear here</span>
         </div>
       ) : (
         <div className="activity-list">
-          {transactions.map((tx) => (
+          {allTransactions.map((tx) => (
             <a
               key={tx.signature}
               href={`${NETWORK_CONFIG.explorerUrl}/tx/${tx.signature}?cluster=${NETWORK_CONFIG.cluster}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="activity-item"
+              className={`activity-item ${tx.status === 'pending' ? 'pending' : ''}`}
             >
               <div className="activity-info">
-                <span className={`activity-status ${tx.status}`}></span>
+                {tx.status === 'pending' ? (
+                  <span className="spinner-small pending-spinner"></span>
+                ) : (
+                  <span className={`activity-status ${tx.status}`}></span>
+                )}
                 <span className="activity-type">{tx.type}</span>
                 <code className="activity-sig">{formatSignature(tx.signature)}</code>
               </div>
-              <span className="activity-time">{formatTime(tx.timestamp)}</span>
+              <span className="activity-time">
+                {tx.status === 'pending' ? 'Pending...' : formatTime(tx.timestamp)}
+              </span>
             </a>
           ))}
         </div>
