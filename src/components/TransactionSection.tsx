@@ -54,7 +54,16 @@ export function TransactionSection() {
       setTxSignature(signature);
     } catch (err) {
       console.error('Transfer failed:', err);
-      setError(err instanceof Error ? err.message : 'Transaction failed');
+      const errorMessage = err instanceof Error ? err.message : 'Transaction failed';
+      
+      // Parse common errors into user-friendly messages
+      if (errorMessage.includes('insufficient lamports')) {
+        setError('Insufficient balance. Get devnet SOL from faucet.solana.com');
+      } else if (errorMessage.includes('User rejected')) {
+        setError('Transaction cancelled by user');
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setIsLoading(false);
     }
