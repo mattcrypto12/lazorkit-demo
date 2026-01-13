@@ -80,7 +80,7 @@ export function QuickActions() {
       </div>
 
       <p className="card-description">
-        One-click gasless transactions. No gas fees, no confirmations dialogs.
+        One-click gasless transactions. You pay $0.00 in network fees.
       </p>
 
       <div className="quick-actions-grid">
