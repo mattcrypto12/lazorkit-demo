@@ -119,13 +119,6 @@ export function WalletInfo({ wallet }: WalletInfoProps) {
         </div>
 
         <div className="wallet-field">
-          <span className="wallet-label">Credential ID</span>
-          <div className="wallet-value">
-            <code title={wallet.credentialId}>{formatAddress(wallet.credentialId)}</code>
-          </div>
-        </div>
-
-        <div className="wallet-field">
           <span className="wallet-label">Balance</span>
           <div className="balance-value">
             {isLoading ? (
@@ -136,6 +129,13 @@ export function WalletInfo({ wallet }: WalletInfoProps) {
                 <span>SOL</span>
               </>
             )}
+          </div>
+        </div>
+
+        <div className="wallet-field">
+          <span className="wallet-label">Network</span>
+          <div className="wallet-value">
+            <span className="network-badge">Devnet</span>
           </div>
         </div>
       </div>

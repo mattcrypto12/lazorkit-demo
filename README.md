@@ -1,20 +1,32 @@
-# 🔐 LazorKit Passkey Demo
+# LazorKit Passkey Demo
 
 A comprehensive demo showcasing **LazorKit SDK** integration for passkey-based Solana wallets with gasless transactions. This project demonstrates how to build a modern Solana dApp that eliminates the need for browser extensions and seed phrases.
 
 ![LazorKit Demo](https://img.shields.io/badge/Solana-Devnet-green) ![Framework](https://img.shields.io/badge/Framework-Vite%20%2B%20React-blue) ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-## 🌐 Live Demo
+## Live Demo
 
 **[https://lazorkit-demo-two.vercel.app](https://lazorkit-demo-two.vercel.app)**
 
-## ✨ Features
+## Features
 
-- **🔐 Passkey Authentication**: Use fingerprint, Face ID, or Windows Hello instead of seed phrases
-- **⚡ Gasless Transactions**: Users don't need SOL for gas fees - the paymaster sponsors them
-- **🔒 Smart Wallet**: On-chain PDA-based accounts with built-in security features
-- **📱 Cross-Device Sessions**: Passkeys sync across devices automatically
-- **🎨 Modern UI**: Clean, responsive interface built with React
+| Feature | Description |
+|---------|-------------|
+| **Passkey Authentication** | Use fingerprint, Face ID, or Windows Hello instead of seed phrases |
+| **Gasless Transactions** | Users don't need SOL for gas fees - paymaster sponsors them |
+| **One-Click Actions** | Pre-configured quick actions for common operations |
+| **Smart Wallet (PDA)** | On-chain accounts with built-in security |
+| **Transaction History** | Real-time activity feed |
+| **Message Signing** | Cryptographic proof of wallet ownership |
+| **Reusable Hooks** | Custom React hooks for easy integration |
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [README.md](./README.md) | Quick start guide and overview |
+| [TUTORIALS.md](./TUTORIALS.md) | Step-by-step integration tutorials |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | System design and code structure |
 
 ## 🚀 Quick Start
 
