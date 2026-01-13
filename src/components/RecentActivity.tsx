@@ -30,7 +30,7 @@ export function RecentActivity() {
             method: 'getSignaturesForAddress',
             params: [
               smartWalletPubkey.toBase58(),
-              { limit: 5 }
+              { limit: 10 }
             ],
           }),
         });
@@ -38,13 +38,26 @@ export function RecentActivity() {
         const data = await response.json();
         
         if (data.result) {
-          const txs: Transaction[] = data.result.map((tx: { signature: string; blockTime: number; err: unknown }) => ({
+          const allTxs: Transaction[] = data.result.map((tx: { signature: string; blockTime: number; err: unknown }) => ({
             signature: tx.signature,
             type: 'Transfer',
             timestamp: tx.blockTime * 1000,
             status: tx.err ? 'failed' : 'success',
           }));
-          setTransactions(txs);
+          
+          // Group transactions within 3 seconds of each other (smart wallet creates multiple)
+          // Only show the first one from each group
+          const grouped: Transaction[] = [];
+          let lastTimestamp = 0;
+          
+          for (const tx of allTxs) {
+            if (Math.abs(tx.timestamp - lastTimestamp) > 3000) {
+              grouped.push(tx);
+              lastTimestamp = tx.timestamp;
+            }
+          }
+          
+          setTransactions(grouped.slice(0, 5));
         }
       } catch (error) {
         console.error('Failed to fetch transactions:', error);
