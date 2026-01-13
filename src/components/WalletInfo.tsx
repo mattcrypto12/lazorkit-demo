@@ -1,7 +1,7 @@
 import { useWallet } from '@lazorkit/wallet';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { NETWORK_CONFIG } from '../config';
+import { LAZORKIT_CONFIG, NETWORK_CONFIG } from '../config';
 import { ConnectButton } from './ConnectButton';
 
 interface WalletInfoProps {
@@ -19,14 +19,23 @@ export function WalletInfo({ wallet }: WalletInfoProps) {
   const { smartWalletPubkey } = useWallet();
   const [balance, setBalance] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const fetchingRef = useRef(false);
+  const lastFetchRef = useRef(0);
 
   useEffect(() => {
     async function fetchBalance() {
       if (!smartWalletPubkey) return;
+      
+      // Prevent concurrent fetches and rate limit to once per 10 seconds
+      const now = Date.now();
+      if (fetchingRef.current || now - lastFetchRef.current < 10000) return;
+      
+      fetchingRef.current = true;
+      lastFetchRef.current = now;
 
       try {
         setIsLoading(true);
-        const response = await fetch('https://api.devnet.solana.com', {
+        const response = await fetch(LAZORKIT_CONFIG.RPC_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -37,20 +46,31 @@ export function WalletInfo({ wallet }: WalletInfoProps) {
           }),
         });
         const data = await response.json();
+        if (data.error) {
+          console.warn('RPC error:', data.error.message);
+          return;
+        }
         const lamports = data.result?.value ?? 0;
         setBalance(lamports / LAMPORTS_PER_SOL);
       } catch (error) {
         console.error('Failed to fetch balance:', error);
-        setBalance(0);
       } finally {
         setIsLoading(false);
+        fetchingRef.current = false;
       }
     }
 
-    fetchBalance();
-    const interval = setInterval(fetchBalance, 10000);
-    return () => clearInterval(interval);
-  }, [smartWalletPubkey]);
+    // Initial fetch after a short delay
+    const initialTimeout = setTimeout(fetchBalance, 500);
+    
+    // Refresh every 30 seconds (not 10) to reduce load
+    const interval = setInterval(fetchBalance, 30000);
+    
+    return () => {
+      clearTimeout(initialTimeout);
+      clearInterval(interval);
+    };
+  }, [smartWalletPubkey?.toBase58()]); // Use string to prevent object reference changes
 
   const formatAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;
 
