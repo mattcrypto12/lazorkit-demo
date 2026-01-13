@@ -12,9 +12,10 @@
 export const LAZORKIT_CONFIG = {
   /**
    * Solana RPC URL
-   * Using Devnet for this demo. For mainnet, use a paid RPC provider.
+   * Using a free Helius devnet RPC to avoid rate limits.
+   * Get your own key at https://helius.dev for production.
    */
-  RPC_URL: 'https://api.devnet.solana.com',
+  RPC_URL: 'https://devnet.helius-rpc.com/?api-key=15319bf4-5b40-4958-ac8d-6313aa55eb92',
 
   /**
    * LazorKit Portal URL
