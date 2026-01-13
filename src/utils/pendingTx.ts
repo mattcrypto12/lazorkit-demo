@@ -1,4 +1,4 @@
-// Simple event system for pending transactions
+// Track YOUR transactions only (not other users')
 
 type Listener = (tx: PendingTransaction) => void;
 
@@ -9,6 +9,7 @@ export interface PendingTransaction {
 }
 
 const listeners = new Set<Listener>();
+const yourTransactions = new Map<string, PendingTransaction>();
 
 export function addPendingTransaction(signature: string) {
   const tx: PendingTransaction = {
@@ -16,10 +17,58 @@ export function addPendingTransaction(signature: string) {
     timestamp: Date.now(),
     status: 'pending',
   };
+  yourTransactions.set(signature, tx);
+  // Persist to localStorage so it survives refresh
+  saveToStorage();
   listeners.forEach(fn => fn(tx));
 }
 
 export function subscribeToPending(fn: Listener): () => void {
   listeners.add(fn);
   return () => { listeners.delete(fn); };
+}
+
+export function getYourTransactions(): PendingTransaction[] {
+  loadFromStorage();
+  return Array.from(yourTransactions.values()).sort((a, b) => b.timestamp - a.timestamp);
+}
+
+export function markConfirmed(signature: string) {
+  const tx = yourTransactions.get(signature);
+  if (tx) {
+    tx.status = 'confirmed';
+    saveToStorage();
+  }
+}
+
+export function isYourTransaction(signature: string): boolean {
+  loadFromStorage();
+  return yourTransactions.has(signature);
+}
+
+// LocalStorage helpers
+const STORAGE_KEY = 'lazorkit_your_txs';
+
+function saveToStorage() {
+  try {
+    const data = Array.from(yourTransactions.entries());
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {}
+}
+
+function loadFromStorage() {
+  if (yourTransactions.size > 0) return;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const data: [string, PendingTransaction][] = JSON.parse(raw);
+      // Only keep transactions from last 24 hours
+      const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+      for (const [sig, tx] of data) {
+        if (tx.timestamp > cutoff) {
+          yourTransactions.set(sig, tx);
+        }
+      }
+    }
+  } catch {}
 }
