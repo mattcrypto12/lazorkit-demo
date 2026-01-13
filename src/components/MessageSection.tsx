@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { useWallet } from '@lazorkit/wallet';
 
-/**
- * MessageSection Component
- * Demonstrates message signing for wallet verification
- */
+/* Message signing */
 export function MessageSection() {
   const { isConnected, signMessage } = useWallet();
   

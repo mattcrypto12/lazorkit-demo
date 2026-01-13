@@ -1,23 +1,9 @@
 import { useState, useCallback } from 'react';
 import { useWallet } from '@lazorkit/wallet';
 
-/**
- * Transaction status for tracking UI state
- */
 export type TransactionStatus = 'idle' | 'signing' | 'confirming' | 'success' | 'error';
 
-/**
- * Custom hook for sending gasless transactions with LazorKit
- * 
- * Features:
- * - User-friendly error messages
- * - Transaction status tracking
- * - Automatic error parsing
- * 
- * @example
- * const { send, status, signature, error } = useGaslessTransaction();
- * await send([instruction1, instruction2]);
- */
+/* Hook for sending gasless transactions */
 export function useGaslessTransaction() {
   const { signAndSendTransaction, isConnected } = useWallet();
   

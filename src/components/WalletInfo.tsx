@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { LAZORKIT_CONFIG, NETWORK_CONFIG } from '../config';
 import { ConnectButton } from './ConnectButton';
+import { TokenBalances } from './TokenBalances';
 
 interface WalletInfoProps {
   wallet: {
@@ -11,10 +12,7 @@ interface WalletInfoProps {
   };
 }
 
-/**
- * WalletInfo Component
- * Displays wallet details: address, credential, and balance
- */
+/* Wallet details: address, balance, tokens */
 export function WalletInfo({ wallet }: WalletInfoProps) {
   const { smartWalletPubkey } = useWallet();
   const [balance, setBalance] = useState<number | null>(null);
@@ -139,6 +137,8 @@ export function WalletInfo({ wallet }: WalletInfoProps) {
           </div>
         </div>
       </div>
+
+      <TokenBalances />
 
       {balance !== null && balance < 0.1 && (
         <div className="info-box">

@@ -1,13 +1,7 @@
 import { useWallet } from '@lazorkit/wallet';
 import { useState, useEffect, useRef } from 'react';
 
-/**
- * ConnectButton Component
- * Handles passkey authentication flow
- * 
- * Note: We manage our own loading state because the SDK's isConnecting
- * doesn't reset when the user closes the portal popup without completing auth.
- */
+/* Passkey connect/disconnect button */
 export function ConnectButton() {
   const { connect, disconnect, isConnected } = useWallet();
   const [isLoading, setIsLoading] = useState(false);

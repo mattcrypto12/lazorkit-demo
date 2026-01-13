@@ -2,10 +2,7 @@ import { useWallet } from '@lazorkit/wallet';
 import { ConnectButton } from './ConnectButton';
 import { WalletInfo } from './WalletInfo';
 
-/**
- * WalletSection Component
- * Main section for wallet connection and management
- */
+/* Main wallet card */
 export function WalletSection() {
   const { isConnected, wallet } = useWallet();
 

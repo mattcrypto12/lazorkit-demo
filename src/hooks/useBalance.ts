@@ -2,18 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { LAZORKIT_CONFIG } from '../config';
 
-/**
- * Custom hook to fetch and track SOL balance
- * 
- * Features:
- * - Automatic polling with configurable interval
- * - Rate limiting to prevent RPC spam
- * - Manual refresh capability
- * - Loading and error states
- * 
- * @example
- * const { balance, isLoading, refresh } = useBalance(publicKey);
- */
+/* Fetch and poll SOL balance */
 export function useBalance(publicKey: PublicKey | null, refreshInterval = 30000) {
   const [balance, setBalance] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);

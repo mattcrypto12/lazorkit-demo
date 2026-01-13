@@ -3,12 +3,7 @@ import { useWallet } from '@lazorkit/wallet';
 import { SystemProgram, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { NETWORK_CONFIG } from '../config';
 
-/**
- * QuickActions Component
- * 
- * Demonstrates one-click gasless transactions.
- * Shows how simple it is to integrate LazorKit for common actions.
- */
+/* One-click gasless sends */
 export function QuickActions() {
   const { isConnected, signAndSendTransaction, smartWalletPubkey } = useWallet();
   

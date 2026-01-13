@@ -1,9 +1,6 @@
 import { NETWORK_CONFIG } from '../config';
 
-/**
- * Header Component
- * Displays app title and network indicator
- */
+/* App header */
 export function Header() {
   return (
     <header className="header">

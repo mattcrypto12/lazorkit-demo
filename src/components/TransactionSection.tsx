@@ -3,10 +3,7 @@ import { useWallet } from '@lazorkit/wallet';
 import { SystemProgram, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { NETWORK_CONFIG, DEMO_CONFIG } from '../config';
 
-/**
- * TransactionSection Component
- * Demonstrates gasless SOL transfers using LazorKit paymaster
- */
+/* SOL transfer form */
 export function TransactionSection() {
   const { isConnected, signAndSendTransaction, smartWalletPubkey } = useWallet();
   

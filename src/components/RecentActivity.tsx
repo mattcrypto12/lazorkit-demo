@@ -9,12 +9,7 @@ interface Transaction {
   status: 'success' | 'failed';
 }
 
-/**
- * RecentActivity Component
- * 
- * Displays recent transactions for the connected wallet.
- * Demonstrates how to fetch and display on-chain activity.
- */
+/* Recent transactions list */
 export function RecentActivity() {
   const { isConnected, smartWalletPubkey } = useWallet();
   const [transactions, setTransactions] = useState<Transaction[]>([]);

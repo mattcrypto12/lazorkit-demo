@@ -8,16 +8,6 @@ import { MessageSection } from './components/MessageSection';
 import { RecentActivity } from './components/RecentActivity';
 import { Footer } from './components/Footer';
 
-/**
- * Main Application Component
- * 
- * Demonstrates LazorKit SDK integration:
- * - Passkey-based wallet authentication (WebAuthn)
- * - Gasless SOL transfers via paymaster
- * - One-click quick actions
- * - Message signing for verification
- * - Transaction history
- */
 function App() {
   return (
     <LazorkitProvider
