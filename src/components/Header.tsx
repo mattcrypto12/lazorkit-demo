@@ -2,9 +2,7 @@ import { NETWORK_CONFIG } from '../config';
 
 /**
  * Header Component
- * 
- * Displays the app title and network indicator.
- * Shows which Solana network the app is connected to.
+ * Displays app title and network indicator
  */
 export function Header() {
   return (
@@ -12,7 +10,7 @@ export function Header() {
       <div className="header-content">
         <div className="logo">
           <img src="/lazorkit.svg" alt="LazorKit" className="logo-icon" />
-          <span className="logo-text">LazorKit Demo</span>
+          <span className="logo-text">LazorKit</span>
         </div>
         
         <div className="network-badge">

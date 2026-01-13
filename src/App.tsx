@@ -9,17 +9,13 @@ import { Footer } from './components/Footer';
 /**
  * Main Application Component
  * 
- * This app demonstrates the key features of LazorKit SDK:
- * 1. Passkey-based wallet creation and authentication
- * 2. Gasless SOL transfers using the paymaster
- * 3. Message signing for verification
- * 
- * The LazorkitProvider wraps the entire app to provide wallet context.
+ * Demonstrates LazorKit SDK integration:
+ * - Passkey-based wallet authentication
+ * - Gasless SOL transfers via paymaster
+ * - Message signing for verification
  */
 function App() {
   return (
-    // LazorkitProvider initializes the SDK and provides wallet context
-    // All child components can access wallet state via useWallet hook
     <LazorkitProvider
       rpcUrl={LAZORKIT_CONFIG.RPC_URL}
       portalUrl={LAZORKIT_CONFIG.PORTAL_URL}
@@ -30,28 +26,29 @@ function App() {
         
         <main className="main-content">
           <div className="container">
-            {/* Hero Section */}
+            {/* Hero */}
             <section className="hero">
-              <h1>🔐 LazorKit Passkey Demo</h1>
+              <h1>LazorKit Passkey Demo</h1>
               <p className="hero-subtitle">
-                Experience the future of Solana UX: No seed phrases, no wallet extensions.
-                Just your fingerprint or Face ID.
+                Solana wallet authentication using device biometrics. No seed phrases, no browser extensions.
               </p>
-              <div className="feature-badges">
-                <span className="badge">✨ Passkey Auth</span>
-                <span className="badge">⚡ Gasless Txns</span>
-                <span className="badge">🔒 Smart Wallet</span>
+              <div className="feature-list">
+                <span className="feature-item">Passkey Authentication</span>
+                <span className="feature-item">Gasless Transactions</span>
+                <span className="feature-item">Smart Wallet</span>
               </div>
             </section>
 
-            {/* Wallet Connection Section */}
-            <WalletSection />
+            {/* Wallet Connection - Full Width */}
+            <div className="grid-full" style={{ marginBottom: '24px' }}>
+              <WalletSection />
+            </div>
 
-            {/* Transaction Demo Section */}
-            <TransactionSection />
-
-            {/* Message Signing Section */}
-            <MessageSection />
+            {/* Transaction & Message - Side by Side */}
+            <div className="grid">
+              <TransactionSection />
+              <MessageSection />
+            </div>
           </div>
         </main>
 

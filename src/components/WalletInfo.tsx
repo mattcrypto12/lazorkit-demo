@@ -4,10 +4,6 @@ import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { NETWORK_CONFIG } from '../config';
 import { ConnectButton } from './ConnectButton';
 
-/**
- * WalletInfo Props
- * Type definition for the wallet information display
- */
 interface WalletInfoProps {
   wallet: {
     smartWallet: string;
@@ -17,44 +13,29 @@ interface WalletInfoProps {
 
 /**
  * WalletInfo Component
- * 
- * Displays detailed information about the connected wallet:
- * - Smart wallet address (the on-chain PDA)
- * - Credential ID (the passkey identifier)
- * - Current SOL balance
- * - Links to the block explorer
- * 
- * This demonstrates how to access wallet data after connection.
+ * Displays wallet details: address, credential, and balance
  */
 export function WalletInfo({ wallet }: WalletInfoProps) {
   const { smartWalletPubkey } = useWallet();
   const [balance, setBalance] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  /**
-   * Fetch the wallet's SOL balance
-   * Uses the Solana RPC to get the current balance
-   */
   useEffect(() => {
     async function fetchBalance() {
       if (!smartWalletPubkey) return;
 
       try {
         setIsLoading(true);
-        // Create a connection to fetch balance
-        const response = await fetch(
-          `https://api.devnet.solana.com`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              jsonrpc: '2.0',
-              id: 1,
-              method: 'getBalance',
-              params: [smartWalletPubkey.toBase58()],
-            }),
-          }
-        );
+        const response = await fetch('https://api.devnet.solana.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'getBalance',
+            params: [smartWalletPubkey.toBase58()],
+          }),
+        });
         const data = await response.json();
         const lamports = data.result?.value ?? 0;
         setBalance(lamports / LAMPORTS_PER_SOL);
@@ -67,113 +48,85 @@ export function WalletInfo({ wallet }: WalletInfoProps) {
     }
 
     fetchBalance();
-    // Refresh balance every 10 seconds
     const interval = setInterval(fetchBalance, 10000);
     return () => clearInterval(interval);
   }, [smartWalletPubkey]);
 
-  /**
-   * Format address for display
-   * Shows first 6 and last 4 characters
-   */
-  const formatAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
+  const formatAddress = (address: string) => `${address.slice(0, 6)}...${address.slice(-4)}`;
 
-  /**
-   * Copy address to clipboard
-   */
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      alert('Address copied to clipboard!');
     } catch (error) {
       console.error('Failed to copy:', error);
     }
   };
 
-  /**
-   * Generate Solana Explorer link
-   */
-  const getExplorerLink = (address: string) => {
-    return `${NETWORK_CONFIG.explorerUrl}/address/${address}?cluster=${NETWORK_CONFIG.cluster}`;
-  };
+  const getExplorerLink = (address: string) => 
+    `${NETWORK_CONFIG.explorerUrl}/address/${address}?cluster=${NETWORK_CONFIG.cluster}`;
 
   return (
     <div className="wallet-info">
-      {/* Connection Status */}
-      <div className="status-bar">
-        <span className="status-connected">
-          <span className="status-dot connected"></span>
+      <div className="wallet-header">
+        <div className="status-indicator">
+          <span className="status-dot"></span>
           Connected
-        </span>
+        </div>
         <ConnectButton />
       </div>
 
-      {/* Wallet Details */}
-      <div className="wallet-details">
-        {/* Smart Wallet Address */}
-        <div className="detail-row">
-          <label>Smart Wallet Address</label>
-          <div className="address-display">
-            <code title={wallet.smartWallet}>
-              {formatAddress(wallet.smartWallet)}
-            </code>
+      <div className="wallet-grid">
+        <div className="wallet-field">
+          <span className="wallet-label">Address</span>
+          <div className="wallet-value">
+            <code title={wallet.smartWallet}>{formatAddress(wallet.smartWallet)}</code>
             <button 
-              className="btn-icon" 
+              className="btn-ghost" 
               onClick={() => copyToClipboard(wallet.smartWallet)}
-              title="Copy address"
+              title="Copy"
             >
-              📋
+              Copy
             </button>
             <a 
               href={getExplorerLink(wallet.smartWallet)}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-icon"
-              title="View on Explorer"
+              className="btn-ghost"
             >
-              🔗
+              View
             </a>
           </div>
         </div>
 
-        {/* Credential ID */}
-        <div className="detail-row">
-          <label>Passkey Credential ID</label>
-          <code className="credential-id" title={wallet.credentialId}>
-            {formatAddress(wallet.credentialId)}
-          </code>
+        <div className="wallet-field">
+          <span className="wallet-label">Credential ID</span>
+          <div className="wallet-value">
+            <code title={wallet.credentialId}>{formatAddress(wallet.credentialId)}</code>
+          </div>
         </div>
 
-        {/* SOL Balance */}
-        <div className="detail-row">
-          <label>Balance</label>
-          <div className="balance-display">
+        <div className="wallet-field">
+          <span className="wallet-label">Balance</span>
+          <div className="balance-value">
             {isLoading ? (
-              <span className="loading-text">Loading...</span>
+              <span style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>Loading...</span>
             ) : (
-              <span className="balance-amount">
-                {balance?.toFixed(4)} SOL
-              </span>
+              <>
+                {balance?.toFixed(4)}
+                <span>SOL</span>
+              </>
             )}
           </div>
         </div>
       </div>
 
-      {/* Airdrop Hint for Devnet */}
       {balance !== null && balance < 0.1 && (
         <div className="info-box">
           <p>
-            💡 Need test SOL? Visit the{' '}
-            <a 
-              href="https://faucet.solana.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-            >
+            Need test SOL? Visit the{' '}
+            <a href="https://faucet.solana.com" target="_blank" rel="noopener noreferrer">
               Solana Faucet
             </a>
-            {' '}and enter your wallet address to get free devnet SOL.
           </p>
         </div>
       )}
