@@ -30,7 +30,20 @@ export function subscribeToPending(fn: Listener): () => void {
 
 export function getYourTransactions(): PendingTransaction[] {
   loadFromStorage();
-  return Array.from(yourTransactions.values()).sort((a, b) => b.timestamp - a.timestamp);
+  const all = Array.from(yourTransactions.values()).sort((a, b) => b.timestamp - a.timestamp);
+  
+  // Group transactions within 5 seconds (LazorKit creates multiple per action)
+  const grouped: PendingTransaction[] = [];
+  let lastTimestamp = 0;
+  
+  for (const tx of all) {
+    if (Math.abs(tx.timestamp - lastTimestamp) > 5000) {
+      grouped.push(tx);
+      lastTimestamp = tx.timestamp;
+    }
+  }
+  
+  return grouped;
 }
 
 export function markConfirmed(signature: string) {
